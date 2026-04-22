@@ -1,0 +1,77 @@
+import { useState } from "react";
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: "professor@uniaraxa.edu.br", senha: "123456" }),
+    });
+
+    const data = await res.json();
+    localStorage.setItem("token", data.token);
+    setToken(data.token);
+  };
+
+  const gerar = async () => {
+    const res = await fetch("http://localhost:3001/gerar-diario", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ texto }),
+    });
+
+    const data = await res.json();
+    setResultado(data.resultado);
+  };
+
+  const voz = () => {
+    const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    rec.lang = "pt-BR";
+    rec.onresult = (e) => setTexto(e.results[0][0].transcript);
+    rec.start();
+  };
+
+  if (!token) {
+    return (
+      <div style={{ padding: 40 }}>
+        <h2>Login Professor</h2>
+        <button onClick={login}>Entrar</button>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ padding: 40 }}>
+      <h1>UniAraxá - Diário Inteligente</h1>
+
+      <textarea value={texto} onChange={(e) => setTexto(e.target.value)} />
+
+      <br />
+      <button onClick={voz}>🎤 Falar</button>
+      <button onClick={gerar}>Gerar</button>
+
+      <pre>{resultado}</pre>
+    </div>
+  );
+}
+
+// ===============================
+// INSTRUÇÕES FINAIS
+// ===============================
+
+/*
+1. Criar .env
+OPENAI_API_KEY= SUA_CHAVE
+JWT_SECRET= segredo
+
+2. Rodar backend:
+node index.js
+
+3. Rodar frontend:
+npm start
+
+4. Deploy:
+Backend → Render
+Frontend → Vercel
+
+5. Pronto: sistema institucional funcionando
+*/
