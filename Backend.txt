@@ -1,0 +1,65 @@
+import express from express;
+import cors from cors;
+import dotenv from dotenv;
+import jwt from jsonwebtoken;
+
+dotenv.config();
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+ ====== LOGIN ======
+app.post(login, (req, res) = {
+  const { email, senha } = req.body;
+
+  if (email === professor@uniaraxa.edu.br && senha === 123456) {
+    const token = jwt.sign({ id 1, nome Professor }, process.env.JWT_SECRET, {
+      expiresIn 1d,
+    });
+
+    return res.json({ token });
+  }
+
+  res.status(401).json({ error Credenciais inválidas });
+});
+
+ ====== MIDDLEWARE ======
+const auth = (req, res, next) = {
+  const token = req.headers.authorization.split( )[1];
+
+  if (!token) return res.status(401).json({ error Sem token });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch {
+    res.status(401).json({ error Token inválido });
+  }
+};
+
+ ====== IA ======
+app.post(gerar-diario, auth, async (req, res) = {
+  const { texto } = req.body;
+
+  const response = await fetch(httpsapi.openai.comv1chatcompletions, {
+    method POST,
+    headers {
+      Content-Type applicationjson,
+      Authorization `Bearer ${process.env.OPENAI_API_KEY}`,
+    },
+    body JSON.stringify({
+      model gpt-4o-mini,
+      messages [
+        {
+          role system,
+          content Transforme a fala do professor em diário de aula com Faltas, Conteúdo e Observações.,
+        },
+        { role user, content texto },
+      ],
+    }),
+  });
+
+  const data = await response.json();
+app.listen(PORT, () = console.log(Backend rodando));
